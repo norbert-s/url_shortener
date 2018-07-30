@@ -4,9 +4,7 @@ const mongo = require('mongodb');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-const validator = require('validator');
 const bodyParser = require('body-parser');
-const dns = require('dns');
 const port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/
@@ -75,3 +73,4 @@ function check(pass){
 app.listen(port, function () {
     console.log('Node.js listening ...');
 });
+
