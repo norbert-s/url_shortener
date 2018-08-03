@@ -66,7 +66,7 @@ app.post('/api/shorturl/new',function(req,res){
         const newFull =baseUrl+newUrl;
         const url = new Url({
            url:pass,
-           short:newUrl
+           short:newFull
         });
         
         url.save(function (err) {
