@@ -63,7 +63,7 @@ app.post('/api/shorturl/new',function(req,res){
         console.log(res);*/
         let newUrl = '/api/shorturl/new/'+shortUrl();
         console.log('newurl'+newUrl);
-        const newFull =baseUrl+shortUrl();
+        const newFull =baseUrl+newUrl;
         const url = new Url({
            url:pass,
            short:newUrl
