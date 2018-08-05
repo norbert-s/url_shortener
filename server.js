@@ -67,7 +67,7 @@ app.post('/api/shorturl/new',function(req,res){
             if (err) return res.send(`it's not a valid url, please try another`);
             else(res.send({original_url: pass,shortened_url:newFull}));
         });
-        let docSave;
+        let docSave='';
         setTimeout(function()
         {
             Url
@@ -76,6 +76,7 @@ app.post('/api/shorturl/new',function(req,res){
                 })
                 .then(doc => {
                     docSave=doc[0].url;
+                    console.log(docSave);
                 })
                 .catch(err => {
                     console.error(err)
