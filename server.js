@@ -11,13 +11,14 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000;
 require('dotenv').config();
-const key = process.env.MONGOLAB_URI;
+const key = process.env.MLAB_URI;
+//console.log(key);
 //mongoose
 mongoose.connect(key)
-    .then(()=>console.log('Connected to the mango database'))
-    .catch(er => console.error('could not connect to mango db',err));
-const db = mongoose.connection;
-/*db.on('error', console.error.bind(console, 'connection error:'));
+    .then(()=>console.log('Connected to the mongo database'))
+    .catch(err => console.error('could not connect to mongo db',err));
+/*const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log('connected to database')
 });*/
@@ -42,56 +43,53 @@ const Url = mongoose.model('Url', urlSchema);
 //-------------------------------------------------------------
 
 app.post('/api/shorturl/new',function(req,res){
-    const baseUrl = 'https://url-shortener-ns.herokuapp.com';
+    const baseUrl = '';//'https://url-shortener-ns.herokuapp.com';
     let givenUrl = req.body;
-    console.log(req.body.url);
+    //console.log(req.body.url);
     let pass = req.body.url;
-    console.log(pass);
+    //console.log(pass);
 
     let result = checkIt(pass);
-    console.log(result);
+    //console.log(result);
     //if url is valid then put it in thedatabase
 
 
     if(result){
-        /*async function createUrl(){
-            const url = new Url({
-                url: givenUrl
-            });
-
-        const res = await course.save();
-        console.log(res);*/
         let newUrl = '/api/shorturl/new/'+shortUrl();
-        console.log('newurl'+newUrl);
-        const newFull =baseUrl+newUrl;
+        //console.log('newurl'+newUrl);
+        const newFull =newUrl;
         const url = new Url({
-           url:pass,
-           short:newFull
+            url:pass,
+            short:newFull
         });
-        
+
         url.save(function (err) {
             if (err) return res.send(`it's not a valid url, please try another`);
             else(res.send({original_url: pass,shortened_url:newFull}));
         });
-        const targetBaseUrl = 'pass';
-        function handleRedirect(req, res) {
-
-            res.redirect(pass);
+        let docSave;
+        setTimeout(function()
+        {
+            Url
+                .find({
+                    short: newFull   // search query
+                })
+                .then(doc => {
+                    docSave=doc[0].url;
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+        },3000);
+        function handleRedirect(rec,res) {
+            res.redirect(docSave);
         }
-        app.get(newUrl, handleRedirect);
-
-        //console.log(random);
-        //let new Url= 'http://api/shortUrl
+        app.get(newFull,handleRedirect);
     }
-
     else res.send(`it's not a valid url, please try another`);
 });
-
-
-
 
 //app listening on function
 app.listen(port, function () {
     console.log('Node.js listening ...');
 });
-
