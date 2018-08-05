@@ -43,7 +43,7 @@ const Url = mongoose.model('Url', urlSchema);
 //-------------------------------------------------------------
 
 app.post('/api/shorturl/new',function(req,res){
-    const baseUrl = '';//'https://url-shortener-ns.herokuapp.com';
+    const baseUrl = 'https://url-shortener-ns.herokuapp.com';
     let givenUrl = req.body;
     //console.log(req.body.url);
     let pass = req.body.url;
@@ -55,7 +55,7 @@ app.post('/api/shorturl/new',function(req,res){
 
 
     if(result){
-        let newUrl = '/api/shorturl/new/'+shortUrl();
+        let newUrl = baseUrl+'/api/shorturl/new/'+shortUrl();
         //console.log('newurl'+newUrl);
         const newFull =newUrl;
         const url = new Url({
