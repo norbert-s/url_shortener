@@ -41,56 +41,75 @@ const urlSchema = new mongoose.Schema({
 const Url = mongoose.model('Url', urlSchema);
 //db is prepared to receive a valid url
 //-------------------------------------------------------------
+function itIsNotThereYet(newUrl,pass,res){
+    console.log('itt vagyunk');
+    const newFull = newUrl;
+    const url = new Url({
+        url: pass,
+        short: newFull
+    });
 
+    url.save(function (err) {
+        if (err) return res.send(`it's not a valid url, please try another`);
+        else (res.send({original_url: pass, shortened_url: newFull}));
+    });
+
+}
 app.post('/api/shorturl/new',function(req,res){
     const baseUrl = 'https://url-shortener-ns.herokuapp.com';
     let givenUrl = req.body;
-    //console.log(req.body.url);
     let pass = req.body.url;
-    //console.log(pass);
-
+    console.log(pass);
     let result = checkIt(pass);
-    //console.log(result);
-    //if url is valid then put it in thedatabase
-
-
-    if(result){
-        let newUrl = '/api/shorturl/new/'+shortUrl();
+    if(result) {
+        let newUrl = '/api/shorturl/new/' + shortUrl();
         //console.log('newurl'+newUrl);
-        const newFull =newUrl;
-        const url = new Url({
-            url:pass,
-            short:newFull
-        });
+        Url.find({url: pass}).exec(callback);
+        function callback(err,doc){
 
-        url.save(function (err) {
-            if (err) return res.send(`it's not a valid url, please try another`);
-            else(res.send({original_url: pass,shortened_url:newFull}));
-        });
+            if (doc[0]==undefined){
+                itIsNotThereYet(newUrl,pass,res);
+            }
+            else{
+                res.send(doc[0]);
+            }
+        }
+    }
+    else res.send(`it's not a valid url, please try another one`);
+});
+
+
+app.get('/api/shorturl/new/:number',function(req,res){
+    let number = req.params.number;
+    console.log(number);
+    let notDigit = /[^0-9]/g;
+    let result = notDigit.test(number);
+    if(result){
+        res.send('it is a url not in the correct format: /api/shorturl/new/number...the number part can contain only numbers');
+    }
+    else{
         let docSave='';
+        let fullUrl = '/api/shorturl/new/'+number;
         setTimeout(function()
         {
-            Url
+            let result = Url
                 .find({
-                    short: newFull   // search query
+                    short: fullUrl   // search query
                 })
                 .then(doc => {
                     docSave=doc[0].url;
-                    console.log(docSave);
+                    res.redirect(docSave);
                 })
                 .catch(err => {
-                    console.error(err)
+                    res.send('there is no url to be found in the database with this number, please try another one');
                 })
         },3000);
-        function handleRedirect(rec,res) {
-            res.redirect(docSave);
-        }
-        app.get(newFull,handleRedirect);
     }
-    else res.send(`it's not a valid url, please try another`);
+
 });
+
 
 //app listening on function
 app.listen(port, function () {
-    console.log('Node.js listening ...');
+    console.log('Node.js listening on port...'+port);
 });
