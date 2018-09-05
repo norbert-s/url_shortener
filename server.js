@@ -79,14 +79,29 @@ app.post('/api/shorturl/new',function(req,res){
 });
 
 
-app.get('/api/shorturl/new/:number',function(req,res){
+app.use('/api/shorturl/new/:number',function(req,res){
+
     let number = req.params.number;
-    console.log(number);
+    let path = req.path;
+    // let newParam = req.params.new;
+    console.log('req'+path);
+    // console.log('number'+number);
+    let url = require('url');
+    let url_parts = url.parse(req.url, true);
+
+    console.log('quesry'+url_parts);
     let notDigit = /[^0-9]/g;
     let result = notDigit.test(number);
-    if(result){
+    if (number==undefined){
+        res.send('no value has been provided');
+    }
+    // else if(newParam=='new'||newParam=='new/'){
+    //     res.send('valuse must be given');
+    // }
+    else if(result){
         res.send('it is a url not in the correct format: /api/shorturl/new/number...the number part can contain only numbers');
     }
+
     else{
         let docSave='';
         let fullUrl = '/api/shorturl/new/'+number;
@@ -107,7 +122,15 @@ app.get('/api/shorturl/new/:number',function(req,res){
     }
 
 });
+// Handle 404
+app.use(function(req, res) {
+    res.send('404: Page not Found', 404);
+});
 
+// Handle 500
+app.use(function(error, req, res, next) {
+    res.send('500: Internal Server Error', 500);
+});
 
 //app listening on function
 app.listen(port, function () {
