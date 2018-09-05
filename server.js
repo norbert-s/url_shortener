@@ -55,7 +55,7 @@ function itIsNotThereYet(newUrl,pass,res){
     });
 
 }
-app.post('/api/shorturl/new',function(req,res){
+app.post('/api/shorturl/new/',function(req,res){
     const baseUrl = 'https://url-shortener-ns.herokuapp.com';
     let givenUrl = req.body;
     let pass = req.body.url;
