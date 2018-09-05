@@ -19,7 +19,7 @@ function check(pass){
             }
         })
         if(j<1)return false;
-        else if (j===1||j==2) return true;
+        else if (j===1||(j===1&&pass.includes('.html'))) return true;
         else if(j>1) return false;
         // else if(!pass.includes('.org')&&!pass.includes('.com')&&!pass.includes('.hu')){
         //     return false;
